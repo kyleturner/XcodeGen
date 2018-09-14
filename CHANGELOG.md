@@ -2,9 +2,13 @@
 
 ## Master
 
+#### Added
+- Allow more granular phase ordering for Copy File and Run Script phases. [402](https://github.com/yonaskolb/XcodeGen/pull/402) @brentleyjones
+
 #### Fixed
 - Fixed default settings for macOS unit-tests [387](https://github.com/yonaskolb/XcodeGen/pull/387) @frankdilo
 - Fixed Copy Headers phase ordering for Xcode 10 [401](https://github.com/yonaskolb/XcodeGen/pull/401) @brentleyjones
+- Fixed phase ordering for modulemap and static libary header Copy File phases. [402](https://github.com/yonaskolb/XcodeGen/pull/402) @brentleyjones
 
 #### Changed
 - Added default value for knownRegions property [390](https://github.com/yonaskolb/XcodeGen/pull/390) @Saik0s
