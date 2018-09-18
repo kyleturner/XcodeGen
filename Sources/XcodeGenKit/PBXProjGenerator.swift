@@ -321,7 +321,7 @@ public class PBXProjGenerator {
         shellScriptPhase.showEnvVarsInLog = buildScript.showEnvVars
         return createObject(id: String(describing: buildScript.name) + shellScript + targetName, shellScriptPhase).reference
     }
-    
+
     func generateCopyFiles(targetName: String, copyFiles: TargetSource.BuildPhase.CopyFilesSettings, buildPhaseFiles: [String]) -> String {
         return createObject(
             id: "copy files" + copyFiles.destination.rawValue + copyFiles.subpath + targetName,
@@ -647,13 +647,13 @@ public class PBXProjGenerator {
         }
 
         copyFilesBuildPhasesFiles.merge(getBuildFilesForCopyFilesPhases()) { $0 + $1 }
-        
-        buildPhases += try target.prebuildScripts.map { try generateBuildScript(targetName: target.name, buildScript: $0) }
-        
+
+        buildPhases += try target.preBuildScripts.map { try generateBuildScript(targetName: target.name, buildScript: $0) }
+
         buildPhases += copyFilesBuildPhasesFiles
             .filter { $0.key.phaseOrder == .preCompile }
             .map { generateCopyFiles(targetName: target.name, copyFiles: $0, buildPhaseFiles: $1) }
-        
+
         let headersBuildPhaseFiles = getBuildFilesForPhase(.headers)
         if !headersBuildPhaseFiles.isEmpty && (target.type == .framework || target.type == .dynamicLibrary) {
             let headersBuildPhase = createObject(id: target.name, PBXHeadersBuildPhase(files: headersBuildPhaseFiles))
@@ -663,7 +663,7 @@ public class PBXProjGenerator {
         let sourcesBuildPhaseFiles = getBuildFilesForPhase(.sources)
         let sourcesBuildPhase = createObject(id: target.name, PBXSourcesBuildPhase(files: sourcesBuildPhaseFiles))
         buildPhases.append(sourcesBuildPhase.reference)
-        
+
         buildPhases += try target.postCompileScripts.map { try generateBuildScript(targetName: target.name, buildScript: $0) }
 
         let resourcesBuildPhaseFiles = getBuildFilesForPhase(.resources) + copyResourcesReferences
@@ -698,7 +698,7 @@ public class PBXProjGenerator {
         buildPhases += copyFilesBuildPhasesFiles
             .filter { $0.key.phaseOrder == .postCompile }
             .map { generateCopyFiles(targetName: target.name, copyFiles: $0, buildPhaseFiles: $1) }
-        
+
         if !carthageFrameworksToEmbed.isEmpty {
             let inputPaths = carthageFrameworksToEmbed
                 .map { "$(SRCROOT)/\(carthageBuildPath)/\(target.platform)/\($0)\($0.contains(".") ? "" : ".framework")" }
@@ -790,7 +790,7 @@ public class PBXProjGenerator {
             ).reference
         }
 
-        buildPhases += try target.postbuildScripts.map { try generateBuildScript(targetName: target.name, buildScript: $0) }
+        buildPhases += try target.postBuildScripts.map { try generateBuildScript(targetName: target.name, buildScript: $0) }
 
         let configs: [ObjectReference<XCBuildConfiguration>] = project.configs.map { config in
             var buildSettings = project.getTargetBuildSettings(target: target, config: config)
@@ -929,14 +929,14 @@ public class PBXProjGenerator {
             if visitedTargets.contains(projectTarget.name) {
                 continue
             }
-            
+
             if let target = projectTarget as? Target {
                 for dependency in target.dependencies {
                     // don't overwrite frameworks, to allow top level ones to rule
                     if frameworks.contains(reference: dependency.reference) {
                         continue
                     }
-                    
+
                     switch dependency.type {
                     case .carthage:
                         frameworks[dependency.reference] = dependency

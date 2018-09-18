@@ -12,6 +12,7 @@
 
 #### Changed
 - Added default value for knownRegions property [390](https://github.com/yonaskolb/XcodeGen/pull/390) @Saik0s
+- Changed spelling of build phases to **preBuildPhase** and **postBuildPhase**. [402](https://github.com/yonaskolb/XcodeGen/pull/402) @brentleyjones
 
 ## 1.11.1
 

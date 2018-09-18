@@ -723,8 +723,9 @@ class ProjectGeneratorTests: XCTestCase {
 
             $0.it("generates run scripts") {
                 var scriptSpec = project
-                scriptSpec.targets[0].prebuildScripts = [BuildScript(script: .script("script1"))]
-                scriptSpec.targets[0].postbuildScripts = [BuildScript(script: .script("script2"))]
+                scriptSpec.targets[0].preBuildScripts = [BuildScript(script: .script("script1"))]
+                scriptSpec.targets[0].postCompileScripts = [BuildScript(script: .script("script2"))]
+                scriptSpec.targets[0].postBuildScripts = [BuildScript(script: .script("script3"))]
                 let pbxProject = try scriptSpec.generatePbxProj()
 
                 guard let nativeTarget = pbxProject.objects.nativeTargets.referenceValues
@@ -736,12 +737,14 @@ class ProjectGeneratorTests: XCTestCase {
                 let scripts = pbxProject.objects.shellScriptBuildPhases.objectReferences
                 let script1 = scripts[0]
                 let script2 = scripts[1]
-                try expect(scripts.count) == 2
+                let script3 = scripts[2]
+                try expect(scripts.count) == 3
                 try expect(buildPhases.first) == script1.reference
-                try expect(buildPhases.last) == script2.reference
+                try expect(buildPhases.last) == script3.reference
 
                 try expect(script1.object.shellScript) == "script1"
                 try expect(script2.object.shellScript) == "script2"
+                try expect(script3.object.shellScript) == "script3"
             }
 
             $0.it("generates targets with cylical dependencies") {
